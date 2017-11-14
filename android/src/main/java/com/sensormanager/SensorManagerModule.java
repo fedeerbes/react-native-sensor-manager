@@ -10,9 +10,11 @@ import com.facebook.react.bridge.Callback;
 import android.util.Log;
 
 public class SensorManagerModule extends ReactContextBaseJavaModule {
-    private static final String		REACT_CLASS = "SensorManager";
-    private AccelerometerRecord		mAccelerometerRecord = null;
+  private static final String		REACT_CLASS = "SensorManager";
+  private AccelerometerRecord		mAccelerometerRecord = null;
+  private AccelerometerRecordNormalDelay		mAccelerometerRecordNormalDelay = null;
 	private GyroscopeRecord 		mGyroscopeRecord = null;
+  private GyroscopeRecordNormalDelay 		mGyroscopeRecordNormalDelay = null;
 	private MagnetometerRecord		mMagnetometerRecord = null;
 	private StepCounterRecord		mStepCounterRecord = null;
 	private ThermometerRecord		mThermometerRecord = null;
@@ -48,15 +50,15 @@ public class SensorManagerModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public int startAccelerometerNormalDelay(int delay, int sensorDelay) {
-		if (mAccelerometerRecord == null)
-			mAccelerometerRecord = new AccelerometerRecordNormalDelay(mReactContext);
-		return (mAccelerometerRecord.start(delay, sensorDelay));
+		if (mAccelerometerRecordNormalDelay == null)
+			mAccelerometerRecordNormalDelay = new AccelerometerRecordNormalDelay(mReactContext);
+		return (mAccelerometerRecordNormalDelay.start(delay, sensorDelay));
     }
 
     @ReactMethod
     public void stopAccelerometerNormalDelay() {
-		if (mAccelerometerRecord != null)
-			mAccelerometerRecord.stop();
+		if (mAccelerometerRecordNormalDelay != null)
+			mAccelerometerRecordNormalDelay.stop();
     }
 
     @ReactMethod
@@ -74,15 +76,15 @@ public class SensorManagerModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public int startGyroscopeNormalDelay(int delay, int sensorDelay) {
-		if (mGyroscopeRecord == null)
-			mGyroscopeRecord = new GyroscopeRecordNormalDelay(mReactContext);
-		return (mGyroscopeRecord.start(delay, sensorDelay));
+		if (mGyroscopeRecordNormalDelay == null)
+			mGyroscopeRecordNormalDelay = new GyroscopeRecordNormalDelay(mReactContext);
+		return (mGyroscopeRecordNormalDelay.start(delay, sensorDelay));
     }
 
     @ReactMethod
     public void stopGyroscopeNormalDelay() {
-		if (mGyroscopeRecord != null)
-			mGyroscopeRecord.stop();
+		if (mGyroscopeRecordNormalDelay != null)
+			mGyroscopeRecordNormalDelay.stop();
     }
 
     @ReactMethod
