@@ -18,7 +18,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 
-public class AccelerometerRecord implements SensorEventListener {
+public class AccelerometerRecordNormalDelay implements SensorEventListener {
 
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
