@@ -47,10 +47,10 @@ public class SensorManagerModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public int startAccelerometerNormalDelay(int delay) {
+    public int startAccelerometerNormalDelay(int delay, int sensorDelay) {
 		if (mAccelerometerRecord == null)
 			mAccelerometerRecord = new AccelerometerRecordNormalDelay(mReactContext);
-		return (mAccelerometerRecord.start(delay));
+		return (mAccelerometerRecord.start(delay, sensorDelay));
     }
 
     @ReactMethod
@@ -68,6 +68,19 @@ public class SensorManagerModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void stopGyroscope() {
+		if (mGyroscopeRecord != null)
+			mGyroscopeRecord.stop();
+    }
+
+    @ReactMethod
+    public int startGyroscopeNormalDelay(int delay, int sensorDelay) {
+		if (mGyroscopeRecord == null)
+			mGyroscopeRecord = new GyroscopeRecordNormalDelay(mReactContext);
+		return (mGyroscopeRecord.start(delay, sensorDelay));
+    }
+
+    @ReactMethod
+    public void stopGyroscopeNormalDelay() {
 		if (mGyroscopeRecord != null)
 			mGyroscopeRecord.stop();
     }

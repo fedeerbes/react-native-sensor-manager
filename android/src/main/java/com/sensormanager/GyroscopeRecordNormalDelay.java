@@ -18,40 +18,34 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 
-public class AccelerometerRecord implements SensorEventListener {
+public class GyroscopeRecord implements SensorEventListener {
 
     private SensorManager mSensorManager;
-    private Sensor mAccelerometer;
+    private Sensor mGyroscope;
     private long lastUpdate = 0;
-    private int i = 0, n = 0;
+    private int i = 0;
 	private int delay;
-	private int isRegistered = 0;
 
 	private ReactContext mReactContext;
 	private Arguments mArguments;
 
 
-    public AccelerometerRecordNormalDelay(ReactApplicationContext reactContext) {
+    public GyroscopeRecordNormalDelay(ReactApplicationContext reactContext) {
         mSensorManager = (SensorManager)reactContext.getSystemService(reactContext.SENSOR_SERVICE);
-        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		mReactContext = reactContext;
     }
 
 	public int start(int delay, int sensorDelay) {
 		this.delay = delay;
-		if (mAccelerometer != null && isRegistered == 0) {
-			mSensorManager.registerListener(this, mAccelerometer, sensorDelay);
-			isRegistered = 1;
+        if ((mGyroscope = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)) != null) {
+			mSensorManager.registerListener(this, mGyroscope, sensorDelay);
 			return (1);
 		}
 		return (0);
 	}
 
     public void stop() {
-		if (isRegistered == 1) {
-			mSensorManager.unregisterListener(this);
-			isRegistered = 0;
-		}
+        mSensorManager.unregisterListener(this);
     }
 
 	private void sendEvent(String eventName, @Nullable WritableMap params)
@@ -70,7 +64,7 @@ public class AccelerometerRecord implements SensorEventListener {
         Sensor mySensor = sensorEvent.sensor;
 		WritableMap map = mArguments.createMap();
 
-        if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+        if (mySensor.getType() == Sensor.TYPE_GYROSCOPE) {
             long curTime = System.currentTimeMillis();
             i++;
             if ((curTime - lastUpdate) > delay) {
@@ -78,7 +72,7 @@ public class AccelerometerRecord implements SensorEventListener {
 				map.putDouble("x", sensorEvent.values[0]);
 				map.putDouble("y", sensorEvent.values[1]);
 				map.putDouble("z", sensorEvent.values[2]);
-				sendEvent("Accelerometer", map);
+				sendEvent("Gyroscope", map);
                 lastUpdate = curTime;
             }
         }
