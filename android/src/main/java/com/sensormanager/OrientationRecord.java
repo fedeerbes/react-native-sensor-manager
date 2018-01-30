@@ -42,8 +42,10 @@ public class OrientationRecord implements SensorEventListener {
     public int start(int delay) {
         this.delay = delay;
         if (mAccelerometer != null && isRegistered == 0) {
-            mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
-            mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_UI);
+//             mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
+//             mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_UI);
+            mSensorManager.registerListener(this, mAccelerometer, 500);
+            mSensorManager.registerListener(this, mMagnetometer, 500);
             isRegistered = 1;
             return (1);
         }
@@ -53,16 +55,16 @@ public class OrientationRecord implements SensorEventListener {
     public void stop() {
         if (isRegistered == 1) {
             mSensorManager.unregisterListener(this);
-        isRegistered = 0;
-      }
+            isRegistered = 0;
+        }
     }
 
     private void sendEvent(String eventName, @Nullable WritableMap params)
     {
         try {
             mReactContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
+                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .emit(eventName, params);
         } catch (RuntimeException e) {
             Log.e("ERROR", "java.lang.RuntimeException: Trying to invoke JS before CatalystInstance has been set!");
         }
@@ -73,45 +75,49 @@ public class OrientationRecord implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-      Sensor mySensor = sensorEvent.sensor;
-      WritableMap map = mArguments.createMap();
+        Sensor mySensor = sensorEvent.sensor;
+        WritableMap map = mArguments.createMap();
 
-      if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER)
-        mGravity = sensorEvent.values;
-      if (mySensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-        mGeomagnetic = sensorEvent.values;
-      if (mGravity != null && mGeomagnetic != null) {
-        float R[] = new float[9];
-        float I[] = new float[9];
-        boolean success = mSensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
-        if (success) {
-          long curTime = System.currentTimeMillis();
-          float orientation[] = new float[3];
-          mSensorManager.getOrientation(R, orientation);
+        if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER)
+            mGravity = sensorEvent.values;
+        if (mySensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+            mGeomagnetic = sensorEvent.values;
+        if (mGravity != null && mGeomagnetic != null) {
+            float R[] = new float[9];
+            float I[] = new float[9];
+            boolean success = mSensorManager.getRotationMatrix(R, I, mGravity, mGeomagnetic);
+            if (success) {
+                long curTime = System.currentTimeMillis();
+                i++;
+                float orientation[] = new float[3];
+                mSensorManager.getOrientation(R, orientation);
 
-          float heading = (float)((Math.toDegrees(orientation[0])) % 360.0f);
-          float pitch = (float)((Math.toDegrees(orientation[1])) % 360.0f);
-          float roll = (float)((Math.toDegrees(orientation[2])) % 360.0f);
+                float heading = (float)((Math.toDegrees(orientation[0])) % 360.0f);
+                float pitch = (float)((Math.toDegrees(orientation[1])) % 360.0f);
+                float roll = (float)((Math.toDegrees(orientation[2])) % 360.0f);
 
-          if (heading < 0) {
-            heading = 360 - (0 - heading);
-          }
+                if (heading < 0) {
+                    heading = 360 - (0 - heading);
+                }
 
-          if (pitch < 0) {
-            pitch = 360 - (0 - pitch);
-          }
+                if (pitch < 0) {
+                    pitch = 360 - (0 - pitch);
+                }
 
-          if (roll < 0) {
-            roll = 360 - (0 - roll);
-          }
+                if (roll < 0) {
+                    roll = 360 - (0 - roll);
+                }
 
-          map.putDouble("azimuth", heading);
-          map.putDouble("pitch", pitch);
-          map.putDouble("roll", roll);
-          sendEvent("Orientation", map);
-          lastUpdate = curTime;
+                if ((curTime - lastUpdate) > delay) {
+                    i = 0;
+                    map.putDouble("azimuth", heading);
+                    map.putDouble("pitch", pitch);
+                    map.putDouble("roll", roll);
+                    sendEvent("Orientation", map);
+                    lastUpdate = curTime;
+                }
+            }
         }
-      }
     }
 
     @Override
