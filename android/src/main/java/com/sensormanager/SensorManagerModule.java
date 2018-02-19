@@ -20,6 +20,7 @@ public class SensorManagerModule extends ReactContextBaseJavaModule {
 	private ThermometerRecord		mThermometerRecord = null;
 	private MotionValueRecord		mMotionValueRecord = null;
 	private OrientationRecord		mOrientationRecord = null;
+	private OrientationRecordNormalDelay		mOrientationRecordNormalDelay = null;
 	private ProximityRecord			mProximityRecord = null;
   private LightSensorRecord   mLightSensorRecord = null;
 
@@ -150,6 +151,19 @@ public class SensorManagerModule extends ReactContextBaseJavaModule {
     public void stopOrientation() {
 		if (mOrientationRecord != null)
 			mOrientationRecord.stop();
+    }
+
+    @ReactMethod
+    public int startOrientationNormalDelay(int delay, int sensorDelay) {
+		if (mOrientationRecordNormalDelay == null)
+			mOrientationRecordNormalDelay = new OrientationRecordNormalDelay(mReactContext);
+		return (mOrientationRecordNormalDelay.start(delay, sensorDelay));
+    }
+
+    @ReactMethod
+    public void stopOrientationNormalDelay() {
+		if (mOrientationRecordNormalDelay != null)
+			mOrientationRecordNormalDelay.stop();
     }
 
     @ReactMethod

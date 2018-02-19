@@ -18,7 +18,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 
-public class OrientationRecord implements SensorEventListener {
+public class OrientationRecordNormalDelay implements SensorEventListener {
 
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
@@ -32,18 +32,18 @@ public class OrientationRecord implements SensorEventListener {
     private Arguments mArguments;
 
 
-    public OrientationRecord(ReactApplicationContext reactContext) {
+    public OrientationRecordNormalDelay(ReactApplicationContext reactContext) {
         mSensorManager = (SensorManager)reactContext.getSystemService(reactContext.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         mReactContext = reactContext;
     }
 
-    public int start(int delay) {
+    public int start(int delay, int sensorDelay) {
         this.delay = delay;
         if (mAccelerometer != null && isRegistered == 0) {
-            mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
-            mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_UI);
+            mSensorManager.registerListener(this, mAccelerometer, sensorDelay);
+            mSensorManager.registerListener(this, mMagnetometer, sensorDelay);
             isRegistered = 1;
             return (1);
         }
